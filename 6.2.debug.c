@@ -3,6 +3,7 @@
 
 void swap(int a[], int x, int y)
 {
+    if(x==y) return;
     int t=a[x];
     a[x]=a[y];
     a[y]=t;
