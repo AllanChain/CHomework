@@ -4,16 +4,22 @@
 int main(int argc, char *argv[])
 {
     char ch;
-    char s[]="R hzb dszg gsv svoo";
-    int len = strlen(s);
-    char m[len+1];
-    m[len]='\0';
-    for (int i = 0; i < len; ++i) {
-        ch=s[i];
-        if('A'<=ch && ch<='Z') m[i]='A'+'Z'-ch;
-        else if('a'<=ch && ch<='z') m[i]='a'+'z'-ch;
-        else m[i]=ch;
+    if(argc==1){
+        printf("Please add command line argument as secret code");
+        return -1;
     }
-    printf(m);
+    char *s;
+    for(int j=1;j<argc;j++){
+        s = argv[j];
+        printf("The Original String: ");
+        printf(s);
+        printf("\nThe Encoded String:  ");
+        while ((ch=*s++)) {
+            if('A'<=ch && ch<='Z') putchar('A'+'Z'-ch);
+            else if('a'<=ch && ch<='z') putchar('a'+'z'-ch);
+            else putchar(ch);
+        }
+        putchar('\n'); putchar('\n');
+    }
     return 0;
 }
