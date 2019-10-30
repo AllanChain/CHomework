@@ -1,5 +1,6 @@
 #include <stdio.h>
 #define TERM 127
+#define LEN 200
 
 /* 
 If you define terminator as 255,
@@ -30,13 +31,14 @@ void add(char *a, char *b, char *c)
 void mul(char *a, char *b, char *c)
 {
     int toadd=0, t;
-    char p[201]="";
+    /* In case it need a bit more */
+    char p[LEN+1]="";
     int ia=0,ib=0,ip=0;
     printf("%d", ib);
     while(a[ia]!=TERM)
     {
         ip=0;
-        for(int j=0;j<201;j++) 
+        for(int j=0;j<LEN+1;j++) 
             p[j]=0;
         ip=ia; //start from ia
         ib=0;
@@ -53,19 +55,20 @@ void mul(char *a, char *b, char *c)
 }
 void reverse(char a[], char b[])
 {
-    char *pa=a+199;
+    char *pa=a+LEN-1;
     while(*pa--==0);
     pa++;
-    while(pa>=a) *b++=*pa---48;
+    while(pa>=a) *b++=*pa---'0';
     *b=TERM; //terminator
 }
 int main(void)
 {
-    char input1[200]="11119";
-    char input2[200]="256";
+    char input1[LEN]="98749";
+    char input2[LEN]="789789";
     /* A little more for terminators */
-    char a[201]="", b[201]="";
-    char c[401]="";
+    char a[LEN+1]="", b[LEN+1]="";
+    char c[LEN*2+1]="";
+    /* Init c as 0 to help add in mul */
     c[1]=TERM;
     /* scanf("%s", input1); */
     /* scanf("%s", input2); */
