@@ -69,11 +69,10 @@ int main(void)
     /* scanf("%s", input1); */
     /* scanf("%s", input2); */
     reverse(input1, a);
-    putrn(a);
-    printrn(a);
+    putrn(a); printf("\n");
     reverse(input2, b);
-    printrn(b);
+    putrn(b); printf("\n");
     mul(a, b, c);
-    printrn(c);
+    putrn(c); printf("\n");
     return 0;
 }
