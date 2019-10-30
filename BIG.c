@@ -63,8 +63,9 @@ int main(void)
 {
     char input1[200]="11119";
     char input2[200]="256";
-    char a[200]="", b[200]="";
-    char c[400]="";
+    /* A little more for terminators */
+    char a[201]="", b[201]="";
+    char c[401]="";
     c[1]=TERM;
     /* scanf("%s", input1); */
     /* scanf("%s", input2); */
