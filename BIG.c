@@ -1,46 +1,52 @@
 #include <stdio.h>
+#define TERM 127
 
-void printrn(char a[])
+/* 
+If you define terminator as 255,
+Then in some system, after converting to int,
+it will be 255, but some will be -1.
+So 127 seems to be a good option.
+*/
+void putrn(char *p)
 {
-    char *pa=a+199;
-    while(pa>=a && *pa--==0);
-    pa++; //for test
-    while(pa>=a) putchar(*pa--+48); //printf("%d",*pa--);
-    putchar('\n');
+    if(*p==TERM) return;
+    putrn(p+1);
+    putchar(*p+'0');
 }
 void add(char *a, char *b, char *c)
 {
     short toadd=0, t=0, terms=0;
     while(terms<2)
     {
-        if(*a==255) terms+=1, *a=0;
-        if(*b==255) terms+=1, *b=0;
+        if(*a==TERM) terms+=1, *a=0;
+        if(*b==TERM) terms+=1, *b=0;
         t=*a+*b+toadd;
         if(t>9) toadd=1, t-=10;
         else toadd=0;
         *c++=t; a++; b++;
     }
-    *c=255;
+    *c=TERM;
 }
 void mul(char *a, char *b, char *c)
 {
     int toadd=0, t;
     char p[201]="";
     int ia=0,ib=0,ip=0;
-    while(a[ia]!=255)
+    printf("%d", ib);
+    while(a[ia]!=TERM)
     {
         ip=0;
         for(int j=0;j<201;j++) 
             p[j]=0;
         ip=ia; //start from ia
         ib=0;
-        while(b[ib]!=255)
+        while(b[ib]!=TERM)
         {
             t=a[ia]*b[ib++]+toadd;
             toadd=t/10;
             p[ip++]=t%10;
         }
-        p[ip]=toadd; p[ip+1]=255;
+        p[ip]=toadd; p[ip+1]=TERM;
         toadd=0; ia++;
         add(p, c, c);
     }
@@ -51,7 +57,7 @@ void reverse(char a[], char b[])
     while(*pa--==0);
     pa++;
     while(pa>=a) *b++=*pa---48;
-    *b=255; //terminator
+    *b=TERM; //terminator
 }
 int main(void)
 {
@@ -59,10 +65,11 @@ int main(void)
     char input2[200]="256";
     char a[200]="", b[200]="";
     char c[400]="";
-    c[1]=255;  //mark term
+    c[1]=TERM;
     /* scanf("%s", input1); */
     /* scanf("%s", input2); */
     reverse(input1, a);
+    putrn(a);
     printrn(a);
     reverse(input2, b);
     printrn(b);
