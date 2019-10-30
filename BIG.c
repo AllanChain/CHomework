@@ -1,13 +1,14 @@
 #include <stdio.h>
-#define TERM 127
-#define LEN 200
-
 /* 
 If you define terminator as 255,
 Then in some system, after converting to int,
 it will be 255, but some will be -1.
 So 127 seems to be a good option.
 */
+#define TERM 127
+/* A little more for terminators */
+#define LEN (6+1)
+
 void putrn(char *p)
 {
     if(*p==TERM) return;
@@ -26,19 +27,18 @@ void add(char *a, char *b, char *c)
         else toadd=0;
         *c++=t; a++; b++;
     }
-    *c=TERM;
+    *c--=TERM; *c=*c?*c:TERM;
 }
 void mul(char *a, char *b, char *c)
 {
     int toadd=0, t;
     /* In case it need a bit more */
-    char p[LEN+1]="";
+    char p[2*LEN]="";
     int ia=0,ib=0,ip=0;
-    printf("%d", ib);
     while(a[ia]!=TERM)
     {
         ip=0;
-        for(int j=0;j<LEN+1;j++) 
+        for(int j=0;j<2*LEN;j++) 
             p[j]=0;
         ip=ia; //start from ia
         ib=0;
@@ -48,7 +48,7 @@ void mul(char *a, char *b, char *c)
             toadd=t/10;
             p[ip++]=t%10;
         }
-        p[ip]=toadd; p[ip+1]=TERM;
+        p[ip]=toadd?toadd:TERM; p[ip+1]=TERM;
         toadd=0; ia++;
         add(p, c, c);
     }
@@ -65,9 +65,8 @@ int main(void)
 {
     char input1[LEN]="98749";
     char input2[LEN]="789789";
-    /* A little more for terminators */
-    char a[LEN+1]="", b[LEN+1]="";
-    char c[LEN*2+1]="";
+    char a[LEN]="", b[LEN]="";
+    char c[LEN*2]="";
     /* Init c as 0 to help add in mul */
     c[1]=TERM;
     /* scanf("%s", input1); */
