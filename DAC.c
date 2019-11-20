@@ -30,6 +30,14 @@ struct BigInt parse_big(char *a)
         *xp++ = *p - '0';
     return x;
 }
+struct BigInt int2big(int a)
+{
+    struct BigInt x;
+    x.len=1;
+    x.val=(char*)malloc(1);
+    *x.val=a;
+    return x;
+}
 void print_big(struct BigInt x)
 {
     for (int i = x.len - 1; i >= 0; i--)
@@ -37,21 +45,18 @@ void print_big(struct BigInt x)
     printf("\n");
 }
 
-/* dividing x to xlow (lowest `0` to higher i digit exclusive)[len=i]
-   and xhigh (i th inclusive to the highest `len`)[len=x.len-i]
-   But... is it okay if one of them is empty? or i larger than x.len? */
 void divide_big(struct BigInt x, int i,
                 struct BigInt *xlow, struct BigInt *xhigh)
 {
     if (i>=x.len){
-        xlow->len = x.len;
-        xhigh->len = 0;
+        xlow->len = 0;
+        xhigh->len = x.len;
     }else{
-        xlow->len = i;
-        xhigh->len = x.len - i;
+        xlow->len = x.len - i;
+        xhigh->len = i;
     }
     xlow->val = x.val;
-    xhigh->val = x.val + i;
+    xhigh->val = x.val + x.len - xhigh->len;
 }
 struct BigInt add_big(struct BigInt a, struct BigInt b)
 {
@@ -81,7 +86,23 @@ struct BigInt add_big(struct BigInt a, struct BigInt b)
     if (toadd)
         // longer x here
         *(x.val+x.len++)=toadd;
+    // free a and b?
     return x;
+}
+struct BigInt mul_big(struct BigInt a, struct BigInt b)
+{
+    int maxlen, n;
+    maxlen = a.len > b.len ? a.len : b.len;
+    if (maxlen==1) return int2big(*a.val**b.val);
+    struct BigInt alow, ahigh, blow, bhigh;
+    n=maxlen/2;
+    devide_big(a, n, &alow, &ahigh);
+    devide_big(b, n, &blow, &bhigh);
+    struct BigInt P1, P2, P3;
+    P1 = mul_big(ahigh, bhigh);
+    P2 = mul_big(alow, blow);
+    P3 = mul_big(add_big(alow, ahigh), add_big(b_low, b_high));
+    return P1;
 }
 
 int main(void)
@@ -94,8 +115,8 @@ int main(void)
     print_big(a);
     print_big(b);
     print_big(add_big(a, b));
-    /* divide_big(b, 5, &c, &d); */
-    /* print_big(c); */
-    /* print_big(d); */
+    divide_big(b, 2, &c, &d);
+    print_big(c);
+    print_big(d);
     return 0;
 }
