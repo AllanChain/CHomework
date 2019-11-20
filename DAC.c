@@ -6,11 +6,10 @@ struct BigInt{
     char *val;
 };
 
-struct BigInt* parse_big(char *a)
+void parse_big(char *a, struct BigInt *x)
 {
     char *p=a;
     int len;
-    static struct BigInt x;
     while(*p++);
     p-=2;  //now p is the last char
     len = p-a+1;
@@ -18,25 +17,36 @@ struct BigInt* parse_big(char *a)
     len = len%2==0?len/2:(len+1)/2;
     static char *xp=NULL;
     xp=(char*)malloc(100);
-    x.val=xp; x.len=len;
+    x->val=xp; x->len=len;
     while(p>a){
         *xp++=(*p-'0')+(*(p-1)-'0')*10;
         p-=2;
     }
     if(p==a) *xp++=*p-'0';
-    return &x;
 }
-void print_big(struct BigInt *x)
+void print_big(struct BigInt x)
 {
-    for(int i=x->len-1; i>=0; i--)
-        printf("%d ", *(x->val+i));
+    for(int i=x.len-1; i>=0; i--)
+        printf("%d", *(x.val+i));
+    printf("\n");
 }
 
+/* dividing x to xlow (lowest `0` to higher i digit exclusive)[len=i]
+   and xhigh (i th inclusive to the highest `len`)[len=x.len-i] */
+void divide_big(struct BigInt x, int i,
+        struct BigInt *xlow, struct BigInt *xhigh)
+{
+    xlow->len=i; xhigh->len=x.len-i;
+    xlow->val=x.val; xhigh->val=x.val+i;
+}
 int main(void)
 {
     char a[]="11256869";
-    struct BigInt *b;
-    b=parse_big(a);
+    struct BigInt b, c, d;
+    parse_big(a, &b);
     print_big(b);
+    divide_big(b, 2, &c, &d);
+    print_big(c);
+    print_big(d);
     return 0;
 }
