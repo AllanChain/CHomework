@@ -57,6 +57,11 @@ void print_big(struct BigInt x)
         printf("%02d", *(x.val + i));
     printf("\n");
 }
+char digit(struct BigInt a, int i)
+{
+    if (i<a.len) return *(a.val+i);
+    else return 0;
+}
 /* dividing x to xlow (lowest `0` to higher i digit exclusive)[len=i]
    and xhigh (i th inclusive to the highest `len`)[len=x.len-i]
    But... is it okay if one of them is empty? or i larger than x.len? */
@@ -74,8 +79,8 @@ void divide_big(struct BigInt x, int i,
     xhigh->val = x.val + i;
 }
 struct BigInt add_big_shift(struct BigInt a, struct BigInt b, int n){
-    struct BigInt x, longer, shorter;
-    short t, toadd=0;
+    struct BigInt x;
+    short longer, t, toadd=0;
     if (a.len==0) return b;
     if (b.len==0) return a;
     x.len = a.len+n>b.len ? a.len+n : b.len;
@@ -84,37 +89,22 @@ struct BigInt add_big_shift(struct BigInt a, struct BigInt b, int n){
         *(x.val+i) = *b.val++;
         b.len--;
     }
-    longer  = a.len > b.len ? a : b;
-    shorter = a.len > b.len ? b : a;
-    for (int i = 0; i<shorter.len; i++){
-        t=*(a.val+i)+*(b.val+i)+toadd;
+    longer  = a.len > b.len ? a.len : b.len;
+    for (int i = 0; i<longer; i++){
+        t=digit(a, i)+digit(b, i)+toadd;
         if(t>99) toadd=1, t-=100;
         else toadd=0;
         *(x.val+i+n)=t;
     }
-    // incase it need `jin wei`
-    // and optimise a little
-    for (int i = shorter.len; i<longer.len; i++){
-        if (toadd){
-            if(*(longer.val+i)==99) *(x.val+i+n)=0;
-            else *(x.val+i+n)=*(longer.val+i)+toadd--;
-        }
-        else *(x.val+i+n)=*(longer.val+i);
-    }
     if (toadd)
         // longer x here
         *(x.val+x.len++)=toadd;
-    // free a and b?
+    // don't free a and b because P1 P2 P3 need more use
     return x;
 }
 struct BigInt add_big(struct BigInt a, struct BigInt b)
 {
     return add_big_shift(a, b, 0);
-}
-char digit(struct BigInt a, int i)
-{
-    if (i<a.len) return *(a.val+i);
-    else return 0;
 }
 struct BigInt sub_big(struct BigInt a, struct BigInt b)
 {
@@ -148,11 +138,13 @@ struct BigInt mul_big(struct BigInt a, struct BigInt b)
     n=maxlen/2;
     divide_big(a, n, &alow, &ahigh);
     divide_big(b, n, &blow, &bhigh);
-    struct BigInt P1, P2, P3;
+    struct BigInt P1, P2, P3, t;
     P1 = mul_big(ahigh, bhigh);
     P2 = mul_big(alow, blow);
     P3 = mul_big(add_big(alow, ahigh), add_big(blow, bhigh));
-    return add_big_shift(add_big_shift(P1, sub_big(sub_big(P3, P1), P2), n), P2, n);
+    t = add_big_shift(add_big_shift(P1, sub_big(sub_big(P3, P1), P2), n), P2, n);
+    free(P1.val); free(P2.val); free(P3.val);
+    return t;
 }
 
 int main(void)
