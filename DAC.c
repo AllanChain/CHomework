@@ -6,7 +6,11 @@ struct BigInt
     int len;
     char *val;
 };
-
+struct BigInt zero(){
+    struct BigInt x;
+    x.len=0;
+    return x;
+}
 struct BigInt parse_big(char *a)
 {
     char *p = a;
@@ -110,6 +114,8 @@ struct BigInt sub_big(struct BigInt a, struct BigInt b)
 {
     struct BigInt x, longer, shorter;
     short t, tosub=0;
+    if (a.len==0) return zero();
+    if (b.len==0) return a;
     x.len = a.len;
     x.val = (char*)malloc(x.len);
     for (int i = 0; i<a.len; i++){
@@ -128,11 +134,7 @@ struct BigInt mul_big(struct BigInt a, struct BigInt b)
 {
     int maxlen, n;
     maxlen = a.len > b.len ? a.len : b.len;
-    if (a.len==0 || b.len==0){
-        struct BigInt x;
-        x.len=0;
-        return x;
-    }
+    if (a.len==0 || b.len==0) return zero();
     if (maxlen==1) return int2big(*a.val**b.val);
     struct BigInt alow, ahigh, blow, bhigh;
     n=maxlen/2;
@@ -149,8 +151,8 @@ struct BigInt mul_big(struct BigInt a, struct BigInt b)
 
 int main(void)
 {
-    char a0[] = "1145672";
-    char b0[] = "86457";
+    char a0[] = "1145758672366542";
+    char b0[] = "864572343464298647";
     struct BigInt a, b, c, d;
     a = parse_big(a0);
     b = parse_big(b0);
