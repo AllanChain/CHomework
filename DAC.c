@@ -1,19 +1,34 @@
 #include <stdio.h>
 #include <malloc.h>
+#include <string.h>
+#include <stdlib.h>
 
 struct BigInt
 {
     int len;
     char *val;
 };
+void print_usage()
+{
+    printf("Usage: DAC.exe add/mul NUMA NUMB\n");
+    printf("       Currently, numbers should be positive.\n");
+    printf("Example: DAC.exe add 1234567890 1234567890\n");
+    printf("         DAC.exe mul 1234567890 1234567890\n");
+    exit(1);
+}
 struct BigInt parse_big(char *a)
 {
     char *p = a;
     int len;
     struct BigInt x;
-    while (*p++)
-        ;
-    p -= 2; //now p is the last char
+    while (*p){
+        if (*p < '0' || *p > '9'){
+            printf("Invalid char %c\n", *p);
+            print_usage();
+        }
+        p++;
+    }
+    p -= 1; //now p is the last char
     len = p - a + 1;
     // add one for another digit if odd
     len = len % 2 == 0 ? len / 2 : (len + 1) / 2;
@@ -141,13 +156,20 @@ struct BigInt mul_big(struct BigInt a, struct BigInt b)
     return t;
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
-    char a0[] = "1140700600066542";
-    char b0[] = "804002303400298647";
+    if (argc < 4)
+        print_usage();
     struct BigInt a, b, c, d;
-    a = parse_big(a0);
-    b = parse_big(b0);
-    print_big(mul_big(a, b));
+    a = parse_big(argv[2]);
+    b = parse_big(argv[3]);
+    if (strcmp(argv[1], "add") == 0)
+        print_big(add_big(a, b));
+    else if (strcmp(argv[1], "mul") == 0)
+        print_big(mul_big(a, b));
+    else{
+        printf("Invalid command %s\n", argv[1]);
+        print_usage();
+    }
     return 0;
 }
