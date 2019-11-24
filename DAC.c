@@ -153,6 +153,7 @@ struct BigInt mul_big(struct BigInt a, struct BigInt b)
     P3 = mul_big(add_big(alow, ahigh), add_big(blow, bhigh));
     t = add_big_shift(add_big_shift(P1, sub_big(sub_big(P3, P1), P2), n), P2, n);
     free(P1.val); free(P2.val); free(P3.val);
+    // Don't free alow, ahigh because they are pointing to a, b's val
     return t;
 }
 
@@ -160,7 +161,7 @@ int main(int argc, char *argv[])
 {
     if (argc < 4)
         print_usage();
-    struct BigInt a, b, c, d;
+    struct BigInt a, b;
     a = parse_big(argv[2]);
     b = parse_big(argv[3]);
     if (strcmp(argv[1], "add") == 0)
@@ -171,5 +172,6 @@ int main(int argc, char *argv[])
         printf("Invalid command %s\n", argv[1]);
         print_usage();
     }
+    free(a.val); free(b.val);
     return 0;
 }
