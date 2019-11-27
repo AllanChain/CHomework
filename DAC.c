@@ -98,13 +98,11 @@ struct BigInt add_big_shift(struct BigInt a, struct BigInt b, int n){
     if (a.len==1 && *a.val==0) return b;
     x.len = a.len+n>b.len ? a.len+n : b.len;
     x.val = (char*)malloc(x.len+1);
-    for (int i=0; i<n && b.len; i++){
-        *(x.val+i) = *b.val++;
-        b.len--;
-    }
-    longer  = a.len > b.len ? a.len : b.len;
+    for (int i=0; i<n && i < b.len; i++)
+        *(x.val+i) = *(b.val+i);
+    longer  = a.len > b.len-n ? a.len : b.len-n;
     for (int i = 0; i<longer; i++){
-        t=digit(a, i)+digit(b, i)+toadd;
+        t=digit(a, i)+digit(b, i+n)+toadd;
         if(t>99) toadd=1, t-=100;
         else toadd=0;
         *(x.val+i+n)=t;
@@ -136,10 +134,13 @@ struct BigInt sub_big(struct BigInt a, struct BigInt b)
     }
     // trim leading 0s
     for (int i=x.len-1; i>=0 && *(x.val+i)==0; i--) x.len--;
+    if(x.len == 0) x.len++;
     return x;
 }
 struct BigInt mul_big(struct BigInt a, struct BigInt b)
 {
+    if (a.len == 1 && *a.val == 0 || b.len == 1 && *b.val == 0)
+        return int2big(0);
     int maxlen, n;
     maxlen = a.len > b.len ? a.len : b.len;
     if (maxlen==1) return int2big(*a.val**b.val);
